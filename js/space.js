@@ -1,51 +1,56 @@
 function buscarImagenesNasa(query){
     const apiUrl = `https://images-api.nasa.gov/search?q=${query}`;
 
-    fetch(apiUrl)
-    .then(response => response.json())
-    .then(data => console.log(data))
+    return fetch(apiUrl)
+        .then(response => response.json())
+        .catch(error => console.log(error))
 }
 
-const imageUrl = item.links[0].href
-const titulo = item.data[0].title
-const  descripcion = item.data[0].description;
-const fecha = item.data[0].date_created;
+function renderDataPlaneta(data){
+    if (data.collection && data.collection.items.length > 0) {
 
-const divResultado = document.createElement ('div');
-divResultado.classList.add('resultado')
+        resultadosContainer.innerHTML = "";
+        data.collection.items.forEach(item => {
+            const imageUrl = item.links[0].href
+            const titulo = item.data[0].title
+            const  descripcion = item.data[0].description;
+            const fecha = item.data[0].date_created;
 
-const imagen = document.createElement('img');
-imagen.src = imagenUrl;
- 
-const tituloElement = document.createElement('h2');
-tituloElement.textContent = titulo;
+            const divResultado = document.createElement ('div');
+            divResultado.classList.add('resultado')
 
-const descripcionElement = document.createElement('p');
-descripcionElement.textContent = descripcion;
+            const imagen = document.createElement('img');
+            imagen.src = imageUrl;
+            
+            const tituloElement = document.createElement('h2');
+            tituloElement.textContent = titulo;
 
-const fechaElement = document.createElement('p');
-fechaElement.textContent = fecha;
+            const descripcionElement = document.createElement('p');
+            descripcionElement.textContent = descripcion;
 
-divresultado.appendchild(imagen);
-divresultado.appendchild(tituloElement);
-divresultado.appendchild(descripcionElement);
-divresultado.appendchild(fechaElement);
+            const fechaElement = document.createElement('p');
+            fechaElement.textContent = fecha;
 
-resultadosContainer.appendChild(divResultado);
-;
+            divResultado.appendChild(imagen);
+            divResultado.appendChild(tituloElement);
+            divResultado.appendChild(descripcionElement);
+            divResultado.appendChild(fechaElement);
+            
+            resultadosContainer.appendChild(divResultado);
+        });
+    } else { resultadosContainer.textContent = "No se encontraron resultados." }
+}
 
+const resultadosContainer = document.getElementById("contenedor");
+resultadosContainer.innerHTML ="";
 
-const botonBuscar = document.getElementById("busqueda");
+const botonBuscar = document.getElementById("btnBuscar");
+
+const campoDeTexto = document.getElementById("inputBuscar");
+
 botonBuscar.addEventListener("click", function(){
-    buscarImagenesNasa(campoDeTexto);
+    planetaNombre = campoDeTexto.value;
+    buscarImagenesNasa(planetaNombre)
+        .then(dataPlaneta => renderDataPlaneta(dataPlaneta));
 
 })
-
-const campoDeTexto = document.getElementById("formulario-busqueda");
-
-
-
-//id="formulario-busqueda" 
-
-
- 
